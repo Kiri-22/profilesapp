@@ -23,6 +23,32 @@ export const data = defineData({
   },
 });
 
+import { type ClientSchema, a, defineData } from "@aws-amplify/
+backend";
+import { postConfirmation } from "../auth/post-confirmation/resource";
+const schema = a
+ .schema({
+ UserProfile: a
+ .model({
+ email: a.string(),
+ profileOwner: a.string(),
+ })
+ .authorization((allow) => [
+ allow.ownerDefinedIn("profileOwner"),
+ ]),
+ })
+ .authorization((allow) => [allow.resource(postConfirmation)]);
+export type Schema = ClientSchema<typeof schema>;
+export const data = defineData({
+ schema,
+ authorizationModes: {
+ defaultAuthorizationMode: "apiKey",
+ apiKeyAuthorizationMode: {
+ expiresInDays: 30,
+ },
+ },
+});
+
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a
 Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
